@@ -1,4 +1,5 @@
 import std::io;
+import std::time;
 
 fn bool isDigit(char c) {
   return c >= '0' && c <= '9';
@@ -190,21 +191,25 @@ fn bool processTextToDigit(char c) {
 fn void main(String[] args) {
   io::printfn("Welcome!!");
 
+  @pool() {
+    Clock clk = clock::now();
+
   ulong sum = 0;
   
   io::File! input = io::file::open(args[1], "r");
   //io::File! input = io::file::open("test_input2", "r");
   //io::File! input = io::file::open("input", "r");
   
-  while(!(input.eof()!!)) {
+  while(try oc = input.read_byte()) {
+/*   while(!(input.eof()!!)) {
     char! oc = input.read_byte();
-    if (catch oc) break;
+    if (catch oc) break;*/
     char c = oc;
     uint current = 0;
     int last = -1;
     bool found_first = false;
     while(c != '\n') {
-      io::printf("%c", c);
+      //io::printf("%c", c);
         //io::printf("State %d: ", state);
       bool found_num = processTextToDigit(c);
         //io::printfn("Char %c -> State %d ", c, state);
@@ -236,10 +241,10 @@ fn void main(String[] args) {
     if (last == -1) last = current;
     current = current * 10 + last;
     sum += current;
-    io::printfn("\nCurr: %d", current);
+    //io::printfn("\nCurr: %d", current);
     state = 0;
   }
   input.close()!!;
-
-  io::printfn("Total: %d", sum);
+  io::printfn("Total: %d (took %s)", sum, clk.mark());
+  };
 }
